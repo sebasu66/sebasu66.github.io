@@ -1,9 +1,15 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 const logFilePath = path.join(__dirname, '../../log.txt');
 
-function logMessage(message) {
+export function logMessage(message) {
     const timestamp = new Date().toISOString();
     const formattedMessage = `${timestamp}: ${message}\n`;
 
@@ -13,5 +19,3 @@ function logMessage(message) {
         }
     });
 }
-
-module.exports = { logMessage };
