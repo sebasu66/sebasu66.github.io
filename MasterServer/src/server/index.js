@@ -51,7 +51,7 @@ const start = "=================================================================
     //get the ip address of the server
     //use 0.0.0.0 to listen to all addresses
     const port = process.env.PORT || 5000;
-    const ip = "0.0.0.0";
+    const ip = "144.126.249.254";
     server.listen(port, ip, () => {
         console.log(start.replace("[replace]", "listening on port " + port));
     });
