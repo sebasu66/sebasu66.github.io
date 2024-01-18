@@ -1,6 +1,6 @@
 //import all components
-import { createInteractiveComponentGrp } from "./components/CustomFabricClasses.js";
-import { createAnimMenu } from "./components/animMenu/animMenu.js";
+import { createInteractiveComponentGrp } from "../components/CustomFabricClasses.js";
+import { createAnimMenu } from "../components/animMenu/animMenu.js";
 import { addCard } from "./fabricImpl.js";
 
 

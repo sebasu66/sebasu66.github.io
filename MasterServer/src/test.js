@@ -1,5 +1,5 @@
-import { drawUI, addLog, createButton } from './ui.js';
-import {socket,objects} from './serverComunication.js';
+import { drawUI, addLog, createButton } from './client/ui.js';
+import {socket,objects} from './client/serverComunication.js';
 //import { Intersection } from 'fabric/fabric-impl.js';
 
 

@@ -1,3 +1,5 @@
+/*import Lato font*/
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital@1&family=Single+Day&family=Special+Elite&display=swap');
 
 :root {
   --color-grey-1000: #191919;
@@ -184,8 +186,6 @@
   --color-border-tertiary: var(--color-grey-100);
 }
 
-/*import Lato font*/
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital@1&family=Single+Day&family=Special+Elite&display=swap');
 
 body {
     margin: 30;

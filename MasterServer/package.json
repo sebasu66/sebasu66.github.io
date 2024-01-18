@@ -2,7 +2,6 @@
     "name": "digitalbgscreen",
     "version": "1.0.0",
     "description": "",
-    "main": "/server/index.js",
     "dependencies": {
       "express": "^4.18.2",
       "fabric": "^5.3.0",
@@ -16,7 +15,7 @@
       "watch": "parcel serve src/server/index.js --public-url localhost --port 3000",
       "start": "nodemon src/server/index.js",
       "deploy": "gh-pages -d build",
-      "build": "parcel build src/server/index.js --dist-dir build"
+      "build": "parcel build src/client/index.html --dist-dir build"
     },
     "author": "Sebastian Urciuolo",
     "license": "ISC",

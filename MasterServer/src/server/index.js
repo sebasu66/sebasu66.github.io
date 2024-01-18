@@ -30,7 +30,7 @@ let game = null;
 //sets the base path to find the files to serve
 //to one level up from the /server folder
 //__dirname is the absolute path to the current file
-app.use(express.static(join(__dirname, '..')));
+app.use(express.static(join(__dirname, 'client')));
 //app.use(express.static(__dirname));
 
 //listen for clients navigating to /
