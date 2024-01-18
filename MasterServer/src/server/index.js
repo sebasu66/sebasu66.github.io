@@ -50,7 +50,11 @@ const start = "=================================================================
 
     //get the ip address of the server
     //use 0.0.0.0 to listen to all addresses
-server.listen(3000, () => console.log(start.replace("[replace]", server.address().address + ":" + server.address().port)));
+    const port = process.env.PORT || 3000;
+    const ip = "0.0.0.0";
+    server.listen(port, ip, () => {
+        console.log(start.replace("[replace]", "listening on port " + port));
+    });
 
 
 //a list of Local Game servers who have registered 
