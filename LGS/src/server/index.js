@@ -26,7 +26,7 @@ const io = new SocketIO(server, {
 
 let game = null;
 
-const MAIN_SERVER_URL = process.env.MAIN_SERVER_URL || "http://localhost:3000";
+const MAIN_SERVER_URL = process.env.MAIN_SERVER_URL || "http://144.126.249.254";
 const GAME_NAME = process.env.GAME_NAME || "Root Game";
 const THIS_SERVER_URL = process.env.THIS_SERVER_URL || "http://localhost:5000";
 

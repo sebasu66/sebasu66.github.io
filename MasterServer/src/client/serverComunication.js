@@ -2,7 +2,7 @@
 import * as evt from "./internalCommEvent.js";
 
 class SocketClient {
-    constructor(_url = "http://localhost:3000") {
+    constructor(_url = "http://144.126.249.254") {
         this.mainServerUrl = _url;
         this.mainServerSocket = null;  // Instantiate the socket to null, it should not be declared until connect
         this.gameServerUrl = null;
@@ -116,7 +116,7 @@ class SocketClient {
 
 
 //create an instance of the socket client and share it
-const serverIP = "http://localhost:3000";
+const serverIP = "http://144.126.249.254";
 const socketClient = new SocketClient(serverIP);
 
 export { socketClient };
