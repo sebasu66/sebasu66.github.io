@@ -1,3 +1,4 @@
+#!/bin/bash
 sudo -u nodejs pm2 stop /src/server/index.js
 git fetch
 git pull

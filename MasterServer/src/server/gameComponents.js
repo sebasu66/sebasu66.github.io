@@ -101,7 +101,7 @@ const componentList=[
     }
 ]
 */
-
+import { logMessage } from './log.js';
 import { readdirSync, statSync, readFileSync, existsSync } from 'fs';
 
 function scanGameFolder(path) {
@@ -134,7 +134,7 @@ function scanGameFolder(path) {
       continue;
     }
   }
-  console.log("SCAN_GAME_FOLDER() gameData:", JSON.stringify(gameData, null, 2));
+  logMessage("SCAN_GAME_FOLDER() gameData:", JSON.stringify(gameData, null, 2));
   return gameData;
 }
 
@@ -187,7 +187,7 @@ function parseFiles(path, componentData) {
 
 function getComponentList(gameID) {
 
-  console.log("GET_COMPONENT_LIST() Current directory:", process.cwd());
+  logMessage("GET_COMPONENT_LIST() Current directory:", process.cwd());
 
   const gamePath = './GAMES/' + gameID;
   const gameData = scanGameFolder(gamePath);
@@ -195,7 +195,7 @@ function getComponentList(gameID) {
   if (gameData.errors.length) {
     console.error(`Errors loading game ${gameID}:`, gameData.errors);
   } else {
-    console.log(`Successfully loaded game ${gameID}:`, gameData.components);
+    logMessage(`Successfully loaded game ${gameID}:`, gameData.components);
   }
 
   return gameData

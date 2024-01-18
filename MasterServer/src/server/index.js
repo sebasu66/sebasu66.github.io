@@ -10,7 +10,7 @@ import { join } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import Game from "./Game.js"
-import { log } from 'console';
+import { logMessage } from './log.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,7 +35,7 @@ app.use(express.static(join(__dirname, '../client')));
 
 //listen for clients navigating to /
 app.get('/', (req, res) => {
-    console.log("REQUEST received: GET / from address: "
+    logMessage("REQUEST received: GET / from address: "
         , req.socket.remoteAddress, req.socket.remotePort,
         " \n query: ", req.query
     + " \n params: ", req.params
@@ -53,7 +53,7 @@ const start = "=================================================================
     const port = process.env.PORT || 5000;
     const ip = "0.0.0.0";
     server.listen(port, ip, () => {
-        console.log(start.replace("[replace]", "listening on port " + port));
+        logMessage(start.replace("[replace]", "listening on port " + port));
     });
 
 
@@ -68,14 +68,14 @@ let gameServers = [];
 //socket.emit sends to the socket that triggered the event
 
 io.on('connection', (socket) => {
-    console.log('New client connected', socket.id);
+    logMessage('New client connected', socket.id);
 
     //is this socket a game server? 
      // wait for the game server to call register
         socket.on('register', (data) => {
             //get socket public ip address if possible
             let ip = socket.request.connection.remoteAddress;
-            console.log('Game server connected, id ={}, ip={}', socket.id, ip);                          
+            logMessage('Game server connected, id ={}, ip={}', socket.id, ip);                          
             logMessageReceived('register',  data);
             gameServers.push({
                 "id": socket.id,
@@ -84,7 +84,7 @@ io.on('connection', (socket) => {
             io.sockets.emit('LGSList', gameServers);
             //on disconnect, remove the game server from the list
             socket.on('disconnect', () => {
-                console.log('Game server disconnected');
+                logMessage('Game server disconnected');
                 gameServers = gameServers.filter(function (el) {
                     return el.id != socket.id;
                 });
@@ -111,7 +111,7 @@ io.on('connection', (socket) => {
  * @param {*} data 
  */
 function logMessageReceived(message, data) {
-    console.log(message + " received: " + JSON.stringify(data));
+    logMessage(message + " received: " + JSON.stringify(data));
 }
 
 /**
@@ -120,6 +120,6 @@ function logMessageReceived(message, data) {
  * @param {*} data 
  */
 function logMessageSent(message, data) {
-    console.log(message + " sent: " + data);
+    logMessage(message + " sent: " + data);
 }
 
