@@ -1,0 +1,79 @@
+:root {
+    --color-bg: #e5e5e5; /* Light gray for background */
+    --color-board: #c4c4c4; /* Gray for the game board */
+    --color-accent: #7a9e9f; /* Muted teal for accents */
+    --color-primary-text: #333333; /* Dark gray for primary text */
+    --color-secondary-text: #555555; /* Medium gray for secondary text */
+    --color-border: #3f3f3f; /* Almost black for borders */
+  }
+  
+  /* General Styles */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Press Start 2P', cursive; /* This font has a retro feel */
+    background-color: #f0f0f0; /* Muted background color */
+  }
+  
+  /* Board Game Container */
+  .board-game {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh; /* Adjust as needed */
+  }
+  
+  /* Game Board */
+  .game-board {
+    background-color: #e1e1e1; /* Muted board color */
+    border: 5px solid #333; /* Simple solid border */
+    padding: 20px;
+    max-width: 600px; /* Adjust as needed */
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  }
+  
+  /* Dashboard */
+  .dashboard {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+  }
+  
+  .dashboard-item {
+    background: #d4d4d4; /* Muted colors for the dashboard */
+    padding: 10px 15px;
+    border-radius: 5px; /* Slightly rounded corners for the dashboard items */
+  }
+  
+  /* Buttons */
+  .button {
+    background-color: #ccc;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    display: inline-block;
+    margin: 4px 2px;
+    transition: 0.3s;
+    border-radius: 4px; /* Slightly rounded corners for buttons */
+    color: #333; /* Dark text for better contrast */
+  }
+  
+  .button:hover {
+    background-color: #bbb; /* Darker background on hover */
+    color: #fff;
+  }
+  
+  /* Typography */
+  h1, h2, h3, p {
+    color: #333; /* Dark color for text */
+    text-align: center;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .board-game {
+      flex-direction: column;
+    }
+  }
+  
