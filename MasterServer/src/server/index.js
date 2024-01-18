@@ -52,8 +52,8 @@ const start = "=================================================================
     //use 0.0.0.0 to listen to all addresses
     const port = process.env.PORT || 5000;
     const ip = "0.0.0.0";
-    server.listen(port, ip, () => {
-        logMessage(start.replace("[replace]", "listening on port " + port));
+    const srv = server.listen(port,  () => {
+        logMessage(start.replace("[replace]", "listening on " + srv.address().address + ":" + srv.address().port));
     });
 
 
