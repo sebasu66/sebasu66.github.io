@@ -16,7 +16,7 @@
       "watch": "parcel serve src/server/index.js --public-url localhost --port 3000",
       "start": "nodemon src/server/index.js",
       "deploy": "gh-pages -d build",
-      "build": "parcel build src/server/index.js --dist-dir dist"
+      "build": "parcel build src/server/index.js --dist-dir build"
     },
     "author": "Sebastian Urciuolo",
     "license": "ISC",
