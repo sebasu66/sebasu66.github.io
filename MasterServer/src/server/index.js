@@ -52,7 +52,7 @@ const start = "=================================================================
     //get the ip address of the server
     //use 0.0.0.0 to listen to all addresses
     const port = process.env.PORT || 5000;
-    const ip = "0.0.0.0";
+    const ip = "localhost";
     const srv = server.listen(port,  () => {
         logMessage(start.replace("[replace]", "listening on " + srv.address().address + ":" + srv.address().port));
     });
