@@ -1,5 +1,7 @@
 
 import * as evt from "./internalCommEvent.js";
+//import socket.io client
+import { io as SocketIOClient, connect } from 'socket.io-client';
 
 class SocketClient {
     constructor(_url = "http://144.126.249.254") {
@@ -17,7 +19,7 @@ class SocketClient {
 
     //Connect to main server to get the list of LGS
     connectToMainServer() {
-        this.mainServerSocket = io(this.mainServerUrl);
+        this.mainServerSocket = SocketIOClient(this.mainServerUrl);
         this.mainServerSocket.on('connect', () => {
             this.connectStatus.connectedToLobby = true;
             evt.dispatchEvent(evt.eventNames.connected_to_main_server, this.connectStatus);
@@ -67,7 +69,7 @@ class SocketClient {
         }
        
         console.log("connecting to game server: " + this.gameServerUrl);
-        this.gameServerSocket = io(this.gameServerUrl);
+        this.gameServerSocket = SocketIOClient(this.gameServerUrl);
 
         this.gameServerSocket.on('connect', () => {
             this.connectStatus.connectedToGame = true;
