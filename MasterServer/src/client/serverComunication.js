@@ -116,7 +116,7 @@ class SocketClient {
 
 
 //create an instance of the socket client and share it
-const serverIP = "http://144.126.249.254";
+const serverIP = "http://localhost:5000";
 const socketClient = new SocketClient(serverIP);
 
 export { socketClient };

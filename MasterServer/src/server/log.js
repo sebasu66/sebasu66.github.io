@@ -13,6 +13,7 @@ export function logMessage(message) {
     const timestamp = new Date().toISOString();
     const formattedMessage = `${timestamp}: ${message}\n`;
 
+    console.log(formattedMessage);   // Log the message to the consoles
     fs.appendFile(logFilePath, formattedMessage, (err) => {
         if (err) {
             console.error('Failed to write to log file:', err);
