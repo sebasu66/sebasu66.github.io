@@ -11,11 +11,12 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import Game from "./Game.js"
 import { logMessage } from './log.js';
-
+import cors from "cors";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+app.use(cors());
 const server = createServer(app);
 const io = new SocketIO(server, {
     cors: {
