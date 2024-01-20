@@ -79,6 +79,12 @@ class SocketClient {
             })
             this.sendPlayerId(this.gameServerSocket);        
             }); 
+
+            //on the getfullgame event, store the game locally
+            this.gameServerSocket.on('getFullGame', (game) => {
+                localStorage.setItem("game", JSON.stringify(game));
+            });
+
         this.gameServerSocket.on('disconnect', () => {
             this.connectStatus.connectedToGame = false;
             evt.dispatchEvent(evt.eventNames.disconnected_from_game_server, this.connectStatus);

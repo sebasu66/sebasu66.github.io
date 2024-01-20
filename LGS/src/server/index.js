@@ -11,9 +11,15 @@ import { join } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import Game from "./Game.js"
+import { config } from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+//load the .env file into process.env
+config( {
+    path: join(__dirname, '../../.env')
+});
+
 
 const app = express();
 const server = createServer(app);
@@ -26,9 +32,13 @@ const io = new SocketIO(server, {
 
 let game = null;
 
-const MAIN_SERVER_URL = process.env.MAIN_SERVER_URL || "http://144.126.249.254";
+const MAIN_SERVER_URL = process.env.MASTER_SERVER_URL || "http://localhost:3000";
+const MAIN_SERVER_PORT = process.env.MASTER_SERVER_PORT || "3000";
+const MAIN_SERVER_HOST= process.env.MASTER_SERVER_HOST || "localhost";
 const GAME_NAME = process.env.GAME_NAME || "Root Game";
-const THIS_SERVER_URL = process.env.THIS_SERVER_URL || "http://localhost:5000";
+const THIS_SERVER_URL = process.env.THIS_SERVER_URL || "http://loCalhost:5000";
+const THIS_SERVER_PORT = process.env.THIS_SERVER_PORT || "5000";
+const THIS_SERVER_HOST= process.env.THIS_SERVER_HOST || "localhost";
 
 //sets the base path to find the files to serve
 //to one level up from the /server folder
@@ -185,11 +195,11 @@ function sendPlayerId(Socket) {
 }
 
 const start = "==============================================================================================" +
-    "\r\n====== Local Game SERVER START  ====================================  LOCALHOST:5000 =========" +
+    "\r\n====== Local Game SERVER START  ====================================  [replace] =========" +
     "\r\n=============================================================================================="
 
-server.listen(5000, () => {
-    console.log(start);
+server.listen(THIS_SERVER_PORT, THIS_SERVER_HOST, () => {
+    console.log(start.replace("[replace]", "" + THIS_SERVER_URL ));
     connectToMainServer();
 });
 

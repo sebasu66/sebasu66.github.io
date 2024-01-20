@@ -12,9 +12,19 @@ import path from 'path';
 import Game from "./Game.js"
 import { logMessage } from './log.js';
 import cors from "cors";
+import { config } from 'dotenv';
+
+
+
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
+//load the .env file into process.env
+config( {
+    path: join(__dirname, '../../.env')
+});
+//debug the .env
+console.log(process.env);
 const app = express();
 app.use(cors());
 const server = createServer(app);
@@ -51,10 +61,10 @@ const start = "=================================================================
 
     //get the ip address of the server
     //use 0.0.0.0 to listen to all addresses
-    const port = process.env.PORT || 5000;
-    const ip = "localhost";
-    const srv = server.listen(port,  () => {
-        logMessage(start.replace("[replace]", "listening on " + srv.address().address + ":" + srv.address().port));
+    const port = process.env.THIS_SERVER_PORT || 5000;
+    const ip = process.env.THIS_SERVER_HOST || "0.0.0.0";
+    const srv = server.listen(port,ip,  () => {
+        logMessage(start.replace("[replace]", "" + ip + ":" + port));
     });
 
 
