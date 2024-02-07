@@ -1,5 +1,6 @@
 
 import * as evt from "./internalCommEvent.js";
+import { io as SocketIOClient, connect } from 'socket.io-client';
 
 class SocketClient {
     constructor(_url = "http://144.126.249.254") {
@@ -17,7 +18,7 @@ class SocketClient {
 
     //Connect to main server to get the list of LGS
     connectToMainServer() {
-        this.mainServerSocket = io();
+        this.mainServerSocket = SocketIOClient();
         this.mainServerSocket.on('connect', () => {
             this.connectStatus.connectedToLobby = true;
             evt.dispatchEvent(evt.eventNames.connected_to_main_server, this.connectStatus);
@@ -71,7 +72,7 @@ class SocketClient {
         //Set and send an ngrok-skip-browser-warning request header with any value
         
 
-        this.gameServerSocket = io(this.gameServerUrl, {
+        this.gameServerSocket = SocketIOClient(this.gameServerUrl, {
             extraHeaders: {
               'ngrok-skip-browser-warning': 'true'  // Send any non-empty value
             }
