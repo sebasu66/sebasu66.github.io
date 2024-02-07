@@ -1,0 +1,1 @@
+ngrok http --domain=ultimate-sensibly-spaniel.ngrok-free.app 5000

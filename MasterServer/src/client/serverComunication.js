@@ -67,7 +67,15 @@ class SocketClient {
         }
        
         console.log("connecting to game server: " + this.gameServerUrl);
-        this.gameServerSocket = io(this.gameServerUrl);
+
+        //Set and send an ngrok-skip-browser-warning request header with any value
+        
+
+        this.gameServerSocket = io(this.gameServerUrl, {
+            extraHeaders: {
+              'ngrok-skip-browser-warning': 'true'  // Send any non-empty value
+            }
+          });
 
         this.gameServerSocket.on('connect', () => {
             this.connectStatus.connectedToGame = true;

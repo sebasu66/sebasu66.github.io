@@ -39,6 +39,7 @@ const GAME_NAME = process.env.GAME_NAME || "Root Game";
 const THIS_SERVER_URL = process.env.THIS_SERVER_URL || "http://loCalhost:5000";
 const THIS_SERVER_PORT = process.env.THIS_SERVER_PORT || "5000";
 const THIS_SERVER_HOST= process.env.THIS_SERVER_HOST || "localhost";
+const THIS_SERVER_EXTERNAL_URL = process.env.THIS_SERVER_EXTERNAL_URL || "http://localhost:5000";
 
 //sets the base path to find the files to serve
 //to one level up from the /server folder
@@ -216,8 +217,8 @@ function connectToMainServer() {
             socketCli = SocketIOClient(MAIN_SERVER_URL);
             connectedToMainSRV = true;
             socketCli.on('connect', () => {
-                console.log(">> Connected to main server,asking to register as a game server");
-                socketCli.emit('register', { type: "game", name: GAME_NAME, url: THIS_SERVER_URL });
+                console.log(">> Connected to main server,asking to register as a game server on " + THIS_SERVER_EXTERNAL_URL + "...) ");
+                socketCli.emit('register', { type: "game", name: GAME_NAME, url: THIS_SERVER_EXTERNAL_URL });
                 //keep the connection alive
                 setInterval(() => {
                     socketCli.emit('keepAlive', { url: THIS_SERVER_URL });
