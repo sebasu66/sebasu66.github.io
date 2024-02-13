@@ -9,12 +9,6 @@ class Game {
         players: [],
         components:getComponentList("ROOT_ES"),
         state: {
-            //a game can have many canvases
-            //each canvas is a different board
-            //each canvas has its own state
-            canvases: [
-                new GameCanvas()
-            ]
         },
         turn: 0,
         log: []
@@ -46,13 +40,14 @@ class Game {
     //load game state from disk
     loadState() {
         //file exists??
+        let g = this;
         if (!fs.existsSync('gameState.json')) {
             console.log('Game.loadState() - Game State File Not Found, return inital state');
-            return this.state;
+            return g.state;
         }
         fs.readFile('gameState.json', 'utf8', function (err, data) {
             if (err) throw err;
-            this.state = JSON.parse(data);
+            g.state = JSON.parse(data);
             console.log('Game.loadState() - Game Loaded!');
         });
     }

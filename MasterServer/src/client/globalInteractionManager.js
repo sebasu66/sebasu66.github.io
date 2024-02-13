@@ -56,7 +56,7 @@ GAME.activateInteractiveMode = activateInteractiveMode;
 GAME.deactivateInteractiveMode = deactivateInteractiveMode;
 
 //make the interactive component class available to the global scope
-
+GAME.methodRunning = false;
 GAME.createInteractiveComponentGrp = createInteractiveComponentGrp;
 
 //make all components available to the global scope
@@ -74,8 +74,6 @@ GAME.canvas = new fabric.Canvas("mainCanvas", {
   GAME.localObjects=[]; //component definitions
   GAME.localState={};//where each component is, only if currently included in a canvas and not
   //inside a container (deck/bag..) (canvas, sideUP(visible face/value), position, owner(user or null), locked?, private?)
-  GAME.canvases=[];
-  GAME.canvases.push(GAME.canvas);
 
 // Zoom con mouse
 GAME.canvas.on('mouse:wheel', function(opt) {
@@ -92,7 +90,10 @@ GAME.canvas.on('mouse:wheel', function(opt) {
 // Pan con mouse
 let panning = false;
 GAME.canvas.on('mouse:down', function (opt) {
-  panning = true;
+  //only if the cursor is not over an object
+  if (opt.target === null) {
+      panning = true;
+  }
 });
 GAME.canvas.on('mouse:up', function (opt) {
   panning = false;

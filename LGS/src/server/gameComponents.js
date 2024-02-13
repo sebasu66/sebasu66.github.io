@@ -173,7 +173,9 @@ function parseFiles(path, componentData) {
     const fullPath = path + '/' + entry;
     const stats = statSync(fullPath);
 
-    if (!stats.isDirectory()) {
+    //only valid files with extension .png or .jpg or .pdf 
+    if (!stats.isDirectory() && stats.size > 0 && stats.size < 1000000
+      && (entry.endsWith('.png') || entry.endsWith('.jpg') || entry.endsWith('.pdf'))){
       //there should be media files
       componentData.files.push(entry)
     }

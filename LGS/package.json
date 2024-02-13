@@ -14,8 +14,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "parcel watch src/index.js --public-url localhost --port 3000",
-    "start": "nodemon src/server/index.js"
+    "watch": "parcel watch src/LGS_index.js --public-url localhost --port 3000",
+    "start": "nodemon src/server/LGS_index.js"
 
   },
   "author": "Sebastian Urciuolo",

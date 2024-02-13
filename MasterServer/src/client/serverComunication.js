@@ -61,21 +61,18 @@ class SocketClient {
     */
     connectToGameServer(_gameServerUrl) {
         this.gameServerUrl = _gameServerUrl;
+        GAME.gameServerUrl = this.gameServerUrl;
         //disconnect from previous game server if any
         if (this.gameServerSocket) {
             this.gameServerSocket.disconnect();
         }
-       
         console.log("connecting to game server: " + this.gameServerUrl);
-
         //Set and send an ngrok-skip-browser-warning request header with any value
-        
-
         this.gameServerSocket = io(this.gameServerUrl, {
             extraHeaders: {
-              'ngrok-skip-browser-warning': 'true'  // Send any non-empty value
+                'ngrok-skip-browser-warning': 'true'  // Send any non-empty value
             }
-          });
+        });
 
         this.gameServerSocket.on('connect', () => {
             this.connectStatus.connectedToGame = true;
@@ -83,22 +80,20 @@ class SocketClient {
             console.log("connected to game server");
             //listen to all game server events and print them
             this.gameServerSocket.onAny((eventName, data) => {
+                if (eventName == "disconnect") {
+                    this.connectStatus.connectedToGame = false;
+                    evt.dispatchEvent(evt.eventNames.disconnected_from_game_server, this.connectStatus);
+                    //reconnect to main server
+                    this.connectToMainServer();
+                }
+                else {
+                    evt.dispatchEvent(eventName, data);
+                }
                 console.log("game server event received: " + eventName + " " + JSON.stringify(data));
             })
-            this.sendPlayerId(this.gameServerSocket);        
-            }); 
-
-            //on the getfullgame event, store the game locally
-            this.gameServerSocket.on('getFullGame', (game) => {
-                localStorage.setItem("game", JSON.stringify(game));
-            });
-
-        this.gameServerSocket.on('disconnect', () => {
-            this.connectStatus.connectedToGame = false;
-            evt.dispatchEvent(evt.eventNames.disconnected_from_game_server, this.connectStatus);
-            //reconnect to main server
-            this.connectToMainServer();
+            this.sendPlayerId(this.gameServerSocket);
         });
+
     }
 
     /**

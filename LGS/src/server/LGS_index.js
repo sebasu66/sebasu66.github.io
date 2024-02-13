@@ -12,11 +12,12 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import Game from "./Game.js"
 import { config } from 'dotenv';
+import e from 'express';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 //load the .env file into process.env
-config( {
+config({
     path: join(__dirname, '../../.env')
 });
 
@@ -25,20 +26,20 @@ const app = express();
 const server = createServer(app);
 const io = new SocketIO(server, {
     cors: {
-      origin: "*",
-      methods: ["GET", "POST"]
+        origin: "*",
+        methods: ["GET", "POST"]
     }
-  });
+});
 
 let game = null;
 
 const MAIN_SERVER_URL = process.env.MASTER_SERVER_URL || "http://localhost:3000";
 const MAIN_SERVER_PORT = process.env.MASTER_SERVER_PORT || "3000";
-const MAIN_SERVER_HOST= process.env.MASTER_SERVER_HOST || "localhost";
+const MAIN_SERVER_HOST = process.env.MASTER_SERVER_HOST || "localhost";
 const GAME_NAME = process.env.GAME_NAME || "Root Game";
 const THIS_SERVER_URL = process.env.THIS_SERVER_URL || "http://loCalhost:5000";
 const THIS_SERVER_PORT = process.env.THIS_SERVER_PORT || "5000";
-const THIS_SERVER_HOST= process.env.THIS_SERVER_HOST || "localhost";
+const THIS_SERVER_HOST = process.env.THIS_SERVER_HOST || "localhost";
 const THIS_SERVER_EXTERNAL_URL = process.env.THIS_SERVER_EXTERNAL_URL || "http://localhost:5000";
 
 //sets the base path to find the files to serve
@@ -62,76 +63,110 @@ io.on('connection', (socket) => {
     socket.on('playerId', (pid) => {
         logMessageReceived('playerId', pid);
 
-    if (game == null) {
-        console.log("Game doesnt exist, create new game")
-        game = new Game();
-    } else {
-        console.log("Game already exist")
-    }
-    if (!game.playerIsInGame(pid)) {
-        game.addPlayer(pid);
-        console.log("Player is not in game, adding him ")
-    }
+        if (game == null) {
+            console.log("Game doesnt exist, create new game")
+            game = new Game();
+        } else {
+            console.log("Game already exist")
+        }
+        if (!game.playerIsInGame(pid)) {
+            game.addPlayer(pid);
+            console.log("Player is not in game, adding him ")
+        }
 
-    //send the full game obj to the player only once
-    socket.emit("getFullGame", game,{hasBinary:false});
-    logMessageSent("getFullGame", game.name)
+        //send the full game object list to the player only once
+        socket.emit("getFullGame", game, { hasBinary: false });
+        logMessageSent("getFullGame", game)
 
 
 
-    //send the full game state to the new player
-    let state = game.loadState();
-    socket.emit('getFullState', state);
-    logMessageSent('getFullState', JSON.stringify(state, null, 2));
+        //send the full game state to the new player
+        let state = game.state
+        socket.emit('serverUpdate', state);
+        logMessageSent('serverUpdate', JSON.stringify(state, null, 2));
 
-    //send the new player's id to all other players
-    socket.broadcast.emit('playerJoined', pid);
-    logMessageSent('broadcasting new playerJoined to all players', pid);
+        
+        //send the new player's id to all other players
+        socket.broadcast.emit('playerJoined', pid);
+        logMessageSent('broadcasting new playerJoined to all players', pid);
 
-    //add listeners for client events:
+        //modify: player moved a card, etc, sends only the changes
+        socket.on('clientUpdate', (data) => {
+            onModify(data, socket);
+        });
 
-    //modify: player moved a card, etc, sends only the changes
-    socket.on('modify', (data) => {
-        onModify(data, socket);
-    });
+        socket.on('addObject', (data) => {
+            onAddObject(data, socket);
+        });
 
-    socket.on('addObject', (data) => {
-        onAddObject(data, socket);
-    });
+        socket.on('removeObject', (data) => {
+            onRemoveObject(data, socket);
+        });
 
-    socket.on('removeObject', (data) => {
-        onRemoveObject(data, socket);
-    });
-
-    socket.on('disconnect', () => {
-        console.log('Client disconnected');
-    });
+        socket.on('disconnect', () => {
+            console.log('Client disconnected');
+        });
     });
 });
 
 
 function onModify(data, socket) {
 
-    logMessageReceived('modify', data);
-    //update the local game state as needed
-    if (game.state[data.id]) {
+    logMessageReceived('clientUpdate', data);
+    //update the local game state as needed, if cant find the object add it
+    let state = game.state;
 
-        /*
-        1. `game.state[data.id]`: This is accessing the `state` object of the `game` object using a dynamic key (`data.id`). The `state` object is presumably storing the state of different game entities, each identified by a unique ID.
-        2. `{...game.state[data.id], ...data}`: This is creating a new object that merges the properties of `game.state[data.id]` and `data`. The spread operator (`...`) is used to include all properties from each object. If a property exists in both objects, the value from `data` will overwrite the value from `game.state[data.id]`.
-        3. `game.state[data.id] = {...game.state[data.id], ...data}`: This is updating the state of the game entity identified by `data.id` with the new, merged object.*/
-        game.state[data.id] = { ...game.state[data.id], ...data };
+    //received state is a partial state, update the full state
+    //format is:
+    /*{"state":
+    {"CARDS":
+    [{"left":206.99798677020416,
+    "top":272.9334871203383,
+    "type":"CARD",
+    "id":"CARD_MAIN_f17.png",
+    "sideUP":"front"}]}}*/
 
-        //broadcast the new state to all other players
-        socket.broadcast.emit('getFullState', game.state);
-        logMessageSent('getFullState', JSON.stringify(game.state, null, 2));
+    //if current state is empty, set it to the received state
+    if (Object.keys(state).length === 0) {
+        state = data.state;
+        game.state = state;
     } else {
-        console.log("onModify: game.state[data.id] not found, resending full state");
-        socket.emit('getFullState', game.state);
-        logMessageSent('getFullState', JSON.stringify(game.state, null, 2));
+        //update the current state with the received state
+        for (let key in data.state) {
+            let comp = data.state[key];//CARDS/DICE/...
+            //loop through the elements and update the properties
+            if (state[key]){
+                let elementList = state[key];
+                //find the element in the current state with the same id
+                let found=false;
+                for (let i = 0; i < elementList.length; i++) {
+                    if (elementList[i].id == comp[0].id) {
+                        found=true;
+                        //update the element
+                        elementList[i] = comp[0];
+                        game.state[key] = elementList;
+                    }
+                }
+                //if the element is not found, add it
+                if (!found){
+                    elementList.push(comp[0]);
+                    game.state[key] = elementList;
+                }
+            }
+        }
     }
 
+
+
+
+    //game.saveState(state);
+    //broadcast the new state to all other players
+    socket.broadcast.emit('serverUpdate', state);
+    logMessageSent('serverUpdate', JSON.stringify(state, null, 2));
+
 }
+
+
 
 
 
@@ -200,7 +235,7 @@ const start = "=================================================================
     "\r\n=============================================================================================="
 
 server.listen(THIS_SERVER_PORT, THIS_SERVER_HOST, () => {
-    console.log(start.replace("[replace]", "" + THIS_SERVER_URL ));
+    console.log(start.replace("[replace]", "" + THIS_SERVER_URL));
     connectToMainServer();
 });
 
@@ -209,8 +244,8 @@ let socketCli = {}
 let connectedToMainSRV = false;
 //try to connect to the main server until it is up
 function connectToMainServer() {
-//connect to the main server as a client and call register 
-//to register this server as a game server
+    //connect to the main server as a client and call register 
+    //to register this server as a game server
     while (!connectedToMainSRV) {
         try {
             console.log(">> Trying to connect to main server at: " + MAIN_SERVER_URL + "...");

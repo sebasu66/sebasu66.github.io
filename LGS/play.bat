@@ -1,4 +1,4 @@
 
 ::run Node.js server
-node ./src/server/index.js
+node ./src/server/LGS_index.js
 

@@ -1,6 +1,8 @@
 //import  {addCard } from './card.js';
-import { drawUI, addLog, createButton,initUI } from './ui.js';
-import {socketClient}  from './serverComunication.js';
+import { drawUI, addLog, createButton, initUI } from './ui.js';
+import { socketClient } from './serverComunication.js';
+import { processGameComponents, updateGameComponents } from './client_game.js';
+import { eventNames } from './internalCommEvent.js';
 
 initUI();
 //listen and print all events
@@ -9,90 +11,105 @@ document.addEventListener("*", function (e) {
 });
 socketClient.connectToMainServer();
 
-//star fabric canvas
-
-
-
-
 //listen to the "pending_redraw" event
 document.addEventListener("pending_redraw", (e) => {
-   console.log("pending_redraw");
-    draw();
+  console.log("pending_redraw");
+  draw();
 });
 
 //message received from the server listener
 document.addEventListener("message_received", (e) => {
-        addLog(e.detail);
-    }
+  addLog(e.detail);
+}
 );
 
-    drawUI(socketClient.playerId);
+//received full game event listener linked to client_game.processGameComponents
+document.addEventListener(eventNames.received_full_game, (e) => {
+  console.log(eventNames.received_full_game + JSON.stringify(e.detail));
+  //draw the game components
+  addToMethodCallQueue(() => {
+    processGameComponents(e.detail);
+  });
+});
+
+document.addEventListener(eventNames.serverUpdate, (e) => {
+  console.log(eventNames.serverUpdate + JSON.stringify(e.detail));
+  //this is a partial update
+  addToMethodCallQueue(() => {
+    updateGameComponents(e.detail);
+  });
+});
+
+
+//method call queue to avoid loosing method calls when receiving too many events
+
+let methodCallQueue = [];
+function runMethodCallQueue() {
+  if(GAME.methodRunning ){
+    console.log("method running, waiting...");
+    setTimeout(runMethodCallQueue, 100);
+    return;
+  }
+  if (methodCallQueue.length > 0) {
+    methodCallQueue.shift()();
+    if (methodCallQueue.length > 0) {
+      setTimeout(runMethodCallQueue, 100);
+    }
+  } 
+}
+
+//add a method to the queue
+function addToMethodCallQueue(method) {
+  methodCallQueue.push(method);
+  runMethodCallQueue();
+  }
+
+
+
+//RESIZE CANVAS if window is resized
+window.addEventListener('resize', function () {
+  GAME.canvas.setWidth(window.innerWidth);
+  GAME.canvas.setHeight(window.innerHeight);
+  GAME.canvas.renderAll();
+});
+
+drawUI(socketClient.playerId);
 
 function draw() {
   GAME.canvas.renderAll();
 }
+//game table
 
 
-//create add card button
-function addCardButtonFunction(){
-    //card optoins ojbect
+fabric.Image.fromURL('/resources/seamless/carbon.png', (img) => {
+  // Extract texture pattern data
+  const patternData = GAME.canvas.getContext('2d').createPattern(img.getElement(), 'repeat');
 
-const cardOptions = {
-    left: 80,
-    top: 80,
-    stroke: "rgb(0,0,10)",
-    strokeWidth: 2,
-    shadow: "rgba(0,0,0,0.5) 5px 5px 5px",
-    selectable: true,
-    id: "card" + objects.length,
-    sideUP: "front",
-    frontImage: "/resources/f01.png",
-    backImage: "/resources/b1.png",
-    flipeable: true
-  };
-  
-//add rge  card locally and send it to the server
-let card =addCard(cardOptions);
-//objects.push(card);
-//send objects to the server
-//socketClient.socketClient.emit('objects', objects); // Send the new position to the server
-}
-//createButton("addCard", 100,10,150,100, addCardButtonFunction, canvas);
-//background Image TO BE DRAWN on tiles
-let tablesize=10000;
-fabric.Object.prototype.transparentCorners = false;
+  // Create large rectangle object
+  const rect = new fabric.Rect({
+    width: 200000 / img.width,
+    height: 200000 / img.height,
+    fill: patternData,
+    selectable: false,
+    hasBorders: false,
+    hasControls: false,
+    lockMovementX: true,
+    lockMovementY: true,
+    //blur filter
+    filters: [new fabric.Image.filters.Blur({ blur: 0.5 })],
+    //apply filters
+    applyFilters: function () {
+      this.filters.forEach(function (filter) {
+        filter.applyTo(this);
+      }, this);
+    }
 
-  function loadPattern(url) {
-    fabric.util.loadImage(url, function(img) {
-      var pattern = new fabric.Pattern({
-        source: img,
-        repeat: 'no-repeat',
-        selectable: false,
-        hasBorders: false,
-        hasControls: false
-      });
-  
-      var rectSize = img.width -5;
-      for (var i = 0; i < tablesize; i += rectSize) {
-        for (var j = 0; j < tablesize; j += rectSize) {
-          var rect = new fabric.Rect({
-            left: i,
-            top: j,
-            width: rectSize,
-            height: rectSize,
-            fill: pattern,
-            selectable: false,
-            hasBorders: false,
-            hasControls: false
-          });
-          GAME.canvas.add(rect);
-        }
-      }
-      GAME.canvas.renderAll();
-    });
-  }
+  });
 
-  loadPattern('resources/green3.jpg');
+  // Add the rectangle to your canvas
+  GAME.canvas.add(rect);
+  draw();
+});
 
 GAME.canvas.on("object:moving", function (options) { });
 
@@ -106,10 +123,14 @@ GAME.canvas.on("object:modified", function (options) {
     options.target.top,
     GAME.canvas
   );
-  socketClient.mainServersocketClient.emit("move", {
-    id: options.target.id,
-    pos: { x: options.target.left, y: options.target.top },
-  }); // Send the new position to the server
+  if (!GAME.ignoreNextObjectModifiedEvent) {
+    //obtain the object that has been moved from the GAME.localObjects array
+    const obj = GAME.localObjects.find((o) => o.id === options.target.id);
+    const state = obj.toJson();
+    socketClient.gameServerSocket.emit(eventNames.clientUpdate, {
+      state
+    }); // Send the new position to the server
+  }
 });
 
 

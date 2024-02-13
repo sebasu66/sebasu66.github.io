@@ -9,12 +9,6 @@ class Game {
         players: {},
         components:getComponentList("SRV_GAME"),
         state: {
-            //a game can have many canvases
-            //each canvas is a different board
-            //each canvas has its own state
-            canvases: [
-                new GameCanvas()
-            ]
         },
         turn: 0,
         log: []

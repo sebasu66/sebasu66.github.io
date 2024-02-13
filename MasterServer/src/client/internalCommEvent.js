@@ -11,7 +11,10 @@ export const eventNames = {
     disconnected_from_main_server: "disconnected_from_main_server",
     obtained_game_servers_list: "obtained_game_servers_list",
     refresh_game_servers_list: "refresh_game_servers_list",
-    connect_to_game_server: "connect_to_game_server"
+    connect_to_game_server: "connect_to_game_server",
+    received_full_game: "getFullGame",
+    serverUpdate: "serverUpdate",
+    clientUpdate: "clientUpdate",
 }
 
 /**
