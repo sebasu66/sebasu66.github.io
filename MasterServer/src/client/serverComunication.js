@@ -67,12 +67,10 @@ class SocketClient {
             this.gameServerSocket.disconnect();
         }
         console.log("connecting to game server: " + this.gameServerUrl);
-        //Set and send an extra header to bypass LocalTunnel security check
-        this.gameServerSocket = io(this.gameServerUrl, {
-            extraHeaders: {
-                'bypass-tunnel-reminder': 'true'  // Send any non-empty value
-            }
-        });
+        //encode in base64 the game server url
+        const query = btoa(this.gameServerUrl);
+        //connect to the game server, sending the query as query parameter
+        this.gameServerSocket = io(serverIP+":6000"+"/?lt_url=" + query);
 
         this.gameServerSocket.on('connect', () => {
             this.connectStatus.connectedToGame = true;
