@@ -48,7 +48,7 @@ class SocketClient {
     }
 
     /**
-     * Ask the main server for the list of game servers
+     * Ask the main server for the list of game servers yo
      */
 
     getLGSList() {
