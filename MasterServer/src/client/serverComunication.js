@@ -67,10 +67,10 @@ class SocketClient {
             this.gameServerSocket.disconnect();
         }
         console.log("connecting to game server: " + this.gameServerUrl);
-        //Set and send an ngrok-skip-browser-warning request header with any value
+        //Set and send an extra header to bypass LocalTunnel security check
         this.gameServerSocket = io(this.gameServerUrl, {
             extraHeaders: {
-                'ngrok-skip-browser-warning': 'true'  // Send any non-empty value
+                'bypass-tunnel-reminder': 'true'  // Send any non-empty value
             }
         });
 
