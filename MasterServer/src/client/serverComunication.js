@@ -70,7 +70,7 @@ class SocketClient {
         //encode in base64 the game server url
         const query = btoa(this.gameServerUrl);
         //connect to the game server, sending the query as query parameter
-        this.gameServerSocket = io(serverIP+":6000"+"/?lt_url=" + query);
+        this.gameServerSocket = io(serverIP+":8080"+"/?lt_url=" + query);
 
         this.gameServerSocket.on('connect', () => {
             this.connectStatus.connectedToGame = true;
