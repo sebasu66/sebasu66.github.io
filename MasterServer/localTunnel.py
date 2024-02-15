@@ -1,7 +1,18 @@
 from flask import Flask, request, redirect
 import requests
 import base64
+from flask_cors import CORS
+
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    return response
+
+
 
 @app.route("/")
 def handle_request():
