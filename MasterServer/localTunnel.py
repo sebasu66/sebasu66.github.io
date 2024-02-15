@@ -42,5 +42,5 @@ def handle_request():
         return f"Error: {e}"  # Handle network or other errors
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6000)  # Adapt host and port as needed
+    app.run(host="0.0.0.0", port=8080)  # Adapt host and port as needed
 
