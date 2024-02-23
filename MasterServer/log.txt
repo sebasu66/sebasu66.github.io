@@ -9757,3 +9757,12 @@
 2024-02-13T19:21:20.696Z: New client connected
 2024-02-13T19:21:21.207Z: getLGSList received: undefined
 2024-02-13T19:21:21.208Z: LGSList sent: [object Object]
+2024-02-21T03:43:13.144Z: ==============================================================================================
+====== BGOnline SERVER START  ======================================  localhost:3000 =========
+==============================================================================================
+2024-02-21T03:43:31.336Z: New client connected
+2024-02-21T03:43:31.346Z: getLGSList received: undefined
+2024-02-21T03:43:31.347Z: LGSList sent: 
+2024-02-21T03:47:17.991Z: New client connected
+2024-02-21T03:47:18.037Z: getLGSList received: undefined
+2024-02-21T03:47:18.046Z: LGSList sent: 
